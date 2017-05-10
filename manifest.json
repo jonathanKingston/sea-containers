@@ -1,0 +1,17 @@
+{
+  "sidebar_action": {
+      "default_title": "Containers sidebar",
+      "default_panel": "sidebar.html"
+  },
+  "permissions": [
+    "windows",
+    "tabs",
+    "contextualIdentities",
+    "cookies"
+  ],
+  "description": "Container sidebar tab management",
+  "homepage_url": "https://github.com/jonathanKingston/extension-debugging",
+  "manifest_version": 2,
+  "name": "Containers sidebar",
+  "version": "0.1"
+}

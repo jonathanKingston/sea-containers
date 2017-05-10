@@ -1,0 +1,138 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: rgb(66, 79, 90);
+  color: rgb(242, 242, 242);
+  font: message-box;
+  -moz-user-select: none;
+}
+
+section {
+  margin: 0 0 1rem 0;
+}
+
+.container {
+  display: flex;
+  padding: 0.25rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.container .usercontext-icon {
+  max-inline-size: 32px;
+  max-block-size: 24px;
+}
+
+.container:hover {
+  background-color: rgb(94, 105, 114);
+}
+
+.close-tab, .new-tab {
+  border: none;
+  height: 16px;
+  cursor: pointer;
+}
+
+.new-tab {
+  background: no-repeat url("chrome://browser/skin/tabbrowser/newtab-inverted.svg");
+  background-position: 0 -1px;
+  position: relative;
+  /* magic numbers, relative to the pinned tab icon */
+  top: -0.1rem;
+}
+
+.close-tab {
+  margin-left: auto;
+  background-image: -moz-image-rect(url("chrome://global/skin/icons/close.svg"), 0, 96, 16, 80);
+}
+
+/*
+.tab-item:hover .close-tab {
+  background-image: -moz-image-rect(url("chrome://global/skin/icons/close.svg"), 0, 80, 16, 64);
+}
+*/
+
+.container-name {
+  font-size: 1.25rem;
+}
+
+.tab-count {
+  padding: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.tab-container {
+  background: rgb(251, 251, 251);
+  color: rgb(51, 51, 51);
+}
+
+.closed .tab-container {
+  display: none;
+}
+
+.tab-item {
+  cursor: pointer;
+  margin: 0;
+  padding: 0.3rem 2px 0.3rem 12px;
+  display: flex;
+  --in-content-border-highlight: transparent;
+  border-inline-start: solid 4px var(--in-content-border-highlight);
+}
+
+.tab-item.dragging {
+  border: 2px dashed #000;
+}
+.tab-item.over {
+  border-block-end: 1px solid fuchsia;
+}
+
+.tab-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-item.active .tab-title {
+  white-space: normal;
+}
+
+.tab-item img {
+  inline-size: 16px;
+  block-size: 16px;
+  margin: 0 4px 0 0;
+}
+
+.tab-item.active {
+  --in-content-border-highlight: #0052cc;
+}
+.tab-item:hover {
+  background-color: #eee;
+}
+
+.pinned-tabs {
+  margin-inline-start: auto;
+  margin-inline-end: 0.5rem;
+  display: flex;
+}
+
+.pinned-tabs .tab-item {
+  border-inline-start: none;
+  padding: 0.3rem;
+  border-block-end: solid 4px var(--in-content-border-highlight);
+}
+
+.pinned-tabs .tab-item:hover {
+  background: #eee;
+}
+
+.pinned-tabs .tab-item.active {
+  background: #fff;
+}
+
+.pinned-tabs .tab-item img {
+  margin: 0;
+}
