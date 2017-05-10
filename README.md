@@ -8,6 +8,7 @@ Opens a sidebar to manage containers
 
 # Installing
 
+- Requires containers enabled
 - Go to about:debugging
 - Load Temporary Addon
 - Click the manifest file in this directory
@@ -18,3 +19,5 @@ Opens a sidebar to manage containers
 - Performance issues, this was hacked together to prove it is possible
 - Alignment issues
 - Look into why some favicons don't load
+
+- Fix in test pilot broken colour and icons

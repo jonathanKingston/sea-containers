@@ -4,7 +4,6 @@
       "default_panel": "sidebar.html"
   },
   "permissions": [
-    "windows",
     "tabs",
     "contextualIdentities",
     "cookies"
