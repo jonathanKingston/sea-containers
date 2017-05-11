@@ -19,6 +19,10 @@ section {
   display: flex;
   padding: 0.25rem;
   align-items: center;
+}
+
+
+.expandable .container {
   cursor: pointer;
 }
 
@@ -38,16 +42,25 @@ section {
 }
 
 .new-tab {
+  box-sizing: content-box;
+  block-size: 21px;
+  inline-size: 16px;
+  padding: 0.3rem;
   background: no-repeat url("chrome://browser/skin/tabbrowser/newtab-inverted.svg");
-  background-position: 0 -1px;
-  position: relative;
-  /* magic numbers, relative to the pinned tab icon */
-  top: -0.1rem;
+  background-position: center 3px;
+  padding-block-end: 1px;
+}
+.new-tab:hover {
+  background-image: url("chrome://browser/skin/tabbrowser/newtab.svg");
+  background-color: #cccccccc;
 }
 
 .close-tab {
   margin-left: auto;
   background-image: -moz-image-rect(url("chrome://global/skin/icons/close.svg"), 0, 96, 16, 80);
+}
+.close-tab:hover {
+  background-color: #cccccccc;
 }
 
 /*

@@ -162,7 +162,7 @@ const tabManager = {
         </div>
         <span class="tab-count"></span>
         <div class="pinned-tabs"></div>
-        <button class="new-tab"></button>
+        <button class="new-tab" title="Open new ${container.name} tab"></button>
       </div>`;
       containerElement.setAttribute("data-identity-icon", container.icon);
       containerElement.setAttribute("data-identity-color", container.color);
@@ -296,7 +296,9 @@ const tabManager = {
       }
       const tabElement = document.createElement("div");
       tabElement.className = "tab-item";
-      tabElement.setAttribute("draggable", true);
+      if (!pinned) {
+        tabElement.setAttribute("draggable", true);
+      }
       tabElement.setAttribute("data-tab-id", tab.id);
       tabElement.addEventListener("dragstart", this);
       tabElement.addEventListener("dragover", this);
@@ -311,12 +313,12 @@ const tabManager = {
         favIconUrl = tab.favIconUrl;
       }
       if (pinned) {
-        tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" />`;
+        tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" title="${tab.title}" />`;
       } else {
         tabElement.innerHTML = escaped`
-          <img src="${favIconUrl}" class="offpage" />
+          <img src="${favIconUrl}" class="offpage" title="${tab.title}" />
           <div class="tab-title">${tab.title}</div>
-          <button class="close-tab"></button>`;
+          <button class="close-tab" title="Close tab"></button>`;
       }
       tabElement.querySelector("img").addEventListener("error", this);
       tabElement.querySelector("img").addEventListener("load", this);
@@ -331,12 +333,16 @@ const tabManager = {
     });
   
     [...document.querySelectorAll('section')].forEach((section) => {
-      const tabCount = section.querySelector(".tab-count");
+      const tabCountElement = section.querySelector(".tab-count");
       const tabContainer = section.querySelector(".tab-container");
       const cookieStoreId = section.getAttribute("data-cookie-store-id");
       debug("found section", tabContainer, cookieStoreId, section, containerTabs[cookieStoreId]);
       if (cookieStoreId in containerTabs) {
-        tabCount.innerText = `(${containerTabs[cookieStoreId].childNodes.length})`;
+        const tabCount = containerTabs[cookieStoreId].childNodes.length;
+        if (tabCount > 0) {
+          section.classList.add("expandable");
+          tabCountElement.innerText = `(${tabCount})`;
+        }
         tabContainer.innerHTML = "";
         tabContainer.appendChild(containerTabs[cookieStoreId]);
       }
