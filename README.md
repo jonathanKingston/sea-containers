@@ -1,4 +1,4 @@
-# Containers sidebar
+# Sea Containers
 
 ## What it does
 
@@ -21,3 +21,7 @@ Opens a sidebar to manage containers
 - Look into why some favicons don't load
 
 - Fix in test pilot broken colour and icons
+
+# Credits
+
+- https://thenounproject.com/search/?q=container&i=715166
