@@ -3,6 +3,11 @@
       "default_title": "Containers sidebar",
       "default_panel": "sidebar.html"
   },
+  "applications": {
+    "gecko": {
+      "strict_min_version": "54.0"
+    }
+  },
   "permissions": [
     "tabs",
     "contextualIdentities",
@@ -12,5 +17,5 @@
   "homepage_url": "https://github.com/jonathanKingston/extension-debugging",
   "manifest_version": 2,
   "name": "Containers sidebar",
-  "version": "0.1"
+  "version": "0.2"
 }
