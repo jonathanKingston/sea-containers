@@ -26,13 +26,13 @@ section {
   cursor: pointer;
 }
 
+.expandable .container:hover {
+  background-color: rgb(94, 105, 114);
+}
+
 .container .usercontext-icon {
   max-inline-size: 32px;
   max-block-size: 24px;
-}
-
-.container:hover {
-  background-color: rgb(94, 105, 114);
 }
 
 .close-tab, .new-tab {
