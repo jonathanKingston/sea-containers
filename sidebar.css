@@ -136,3 +136,8 @@ section {
 .pinned-tabs .tab-item img {
   margin: 0;
 }
+
+/* Lets hide the image but make it load */
+.offpage {
+  opacity: 0;
+}

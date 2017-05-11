@@ -40,6 +40,8 @@ function debug() {
   }
 }
 
+const DEFAULT_FAVICON = "moz-icon://goat?size=16";
+
 const tabManager = {
   currentContainer: [],
   currentTabs: [],
@@ -219,6 +221,17 @@ const tabManager = {
   handleEvent(e) {
     debug("event", e);
     switch (e.type) {
+      case "error":
+        /* load and error handle missing favicons, about: and WhatsApp have issues here.
+           This causes the app to flicker on rerender... however this indicates a redraw, let's fix how regular that is before anything else like caching
+         */
+        e.target.setAttribute("src", DEFAULT_FAVICON);
+        break;
+      case "load":
+        e.target.classList.remove("offpage");
+        e.target.removeEventListener("load", this);
+        e.target.removeEventListener("error", this);
+        break;
       case "click":
         const sectionElement = e.target.closest("section");
         const tabElement = e.target.closest(".tab-item");
@@ -293,18 +306,20 @@ const tabManager = {
         tabElement.classList.add("active");
         activeTab = tabElement;
       }
-      let favIconUrl = "moz-icon://goat?size=16";
+      let favIconUrl = DEFAULT_FAVICON;
       if (tab.favIconUrl) {
         favIconUrl = tab.favIconUrl;
       }
       if (pinned) {
-        tabElement.innerHTML = escaped`<img src="${favIconUrl}" />`;
+        tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" />`;
       } else {
         tabElement.innerHTML = escaped`
-          <img src="${favIconUrl}" />
+          <img src="${favIconUrl}" class="offpage" />
           <div class="tab-title">${tab.title}</div>
           <button class="close-tab"></button>`;
       }
+      tabElement.querySelector("img").addEventListener("error", this);
+      tabElement.querySelector("img").addEventListener("load", this);
       storage[cookieStoreId].appendChild(tabElement);
     };
   
