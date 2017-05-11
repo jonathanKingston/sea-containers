@@ -69,20 +69,20 @@ const tabManager = {
       });
     })
 
-    browser.tabs.onRemoved.addListener((removed) => {
-      const tabElement = this.getTabById(removed);
+    browser.tabs.onActivated.addListener((activated) => {
+      const tabElement = this.getTabById(activated);
       if (tabElement) {
         tabElement.classList.add("active");
       }
       const sectionElement = tabElement.closest("section");
       this.containerOpen(sectionElement);
     });
-    browser.tabs.onActivated.addListener((activated) => {
+    browser.tabs.onRemoved.addListener((removed) => {
       [...this.sidebar.querySelectorAll(".tab-item.active")].forEach((tab) => {
         tab.classList.remove("active");
       });
       
-      const tabElement = this.getTabById(activated);
+      const tabElement = this.getTabById(removed);
       if (tabElement) {
         tabElement.remove();
       }
@@ -90,11 +90,11 @@ const tabManager = {
 /* not sure if I need these yet
     browser.tabs.onActivated.addListener(refreshTabs);
     browser.tabs.onAttached.addListener(refreshTabs);
-    browser.tabs.onCreated.addListener(refreshTabs);
     browser.tabs.onDetached.addListener(refreshTabs);
     browser.tabs.onReplaced.addListener(refreshTabs);
     browser.tabs.onUpdated.addListener(refreshTabs);
 */
+    browser.tabs.onCreated.addListener(refreshTabs);
     // We could potentially stale check here but it might get out of date
     // tracking the tabs state in memory might be more performant though
     const refreshTabs = (tab) => {
