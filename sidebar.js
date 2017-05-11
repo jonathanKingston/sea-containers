@@ -108,7 +108,10 @@ const tabManager = {
       //Remove for now, check is needed    refreshTabs();
       const tabElement = this.getTabById(tabId);
       if (tabElement && update.title) {
-        tabElement.querySelector('.tab-title').innerText = update.title;
+        const tabTitle = tabElement.querySelector('.tab-title')
+        if (tabTitle) {
+          tabTitle.innerText = update.title;
+        }
       }
     });
   },
