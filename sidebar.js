@@ -102,8 +102,8 @@ const tabManager = {
     // Once I handle everything this can be removed
     // This overfires right now but clears up stale tabs
     browser.tabs.onUpdated.addListener((tabId, update, tab) => {
-console.log("refresh happened", tabId, update, tab);
-  //    refreshTabs();
+      debug("refresh happened", tabId, update, tab);
+      //Remove for now, check is needed    refreshTabs();
       const tabElement = this.getTabById(tabId);
       if (tabElement && update.title) {
         tabElement.querySelector('.tab-title').innerText = update.title;
