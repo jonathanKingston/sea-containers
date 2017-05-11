@@ -8,10 +8,15 @@ Opens a sidebar to manage containers
 
 # Installing
 
-- Requires containers enabled
+- Requires Firefox 54 (currently in Beta)
+  - [Download Beta](https://www.mozilla.org/en-US/firefox/beta/all/)
+  - [Download Nightly Firefox](https://www.mozilla.org/en-US/firefox/nightly/all/)
+- Requires [containers enabled](https://testpilot.firefox.com/experiments/containers)
 - Go to about:debugging
 - Load Temporary Addon
 - Click the manifest file in this directory
+- As this is a debugging extension, it wont last after a restart.
+  - This is currently going through review process to be installable through addons.mozilla.org
 
 # TODO
 
