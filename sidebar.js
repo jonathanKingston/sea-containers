@@ -94,6 +94,15 @@ const tabManager = {
     browser.tabs.onReplaced.addListener(refreshTabs);
     browser.tabs.onUpdated.addListener(refreshTabs);
 */
+    browser.contextualIdentities.onCreated.addListener((objectData) => {
+      console.log("identity added", objectData);
+    });
+    browser.contextualIdentities.onRemoved.addListener((objectData) => {
+      console.log("identity removed", objectData);
+    });
+    browser.contextualIdentities.onChanged.addListener((objectData) => {
+      console.log("identity changed", objectData);
+    });
     browser.tabs.onCreated.addListener(refreshTabs);
     // We could potentially stale check here but it might get out of date
     // tracking the tabs state in memory might be more performant though
