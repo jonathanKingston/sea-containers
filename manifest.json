@@ -4,6 +4,14 @@
     "default_panel": "sidebar.html",
     "default_icon": "sea-containers.svg"
   },
+  "commands": {
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Ctrl+Period"
+      },
+      "description": "collapse sidebar"
+    }
+  },
   "applications": {
     "gecko": {
       "strict_min_version": "54.0"
