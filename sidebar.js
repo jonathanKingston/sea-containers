@@ -73,9 +73,9 @@ const tabManager = {
       const tabElement = this.getTabById(activated);
       if (tabElement) {
         tabElement.classList.add("active");
+        const sectionElement = tabElement.closest("section");
+        this.containerOpen(sectionElement);
       }
-      const sectionElement = tabElement.closest("section");
-      this.containerOpen(sectionElement);
     });
     browser.tabs.onRemoved.addListener((removed) => {
       [...this.sidebar.querySelectorAll(".tab-item.active")].forEach((tab) => {
