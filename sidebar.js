@@ -39,6 +39,9 @@ function debug() {
     console.log(...arguments);
   }
 }
+browser.commands.onCommand.addListener((command) => {
+  console.log("cc", command);
+});
 
 const DEFAULT_FAVICON = "moz-icon://goat?size=16";
 
@@ -58,6 +61,7 @@ const tabManager = {
   },
 
   addListeners() {
+
     browser.tabs.onActivated.addListener((activeInfo) => {
 
       browser.tabs.get(activeInfo.tabId).then((tab) => {
@@ -73,9 +77,9 @@ const tabManager = {
       const tabElement = this.getTabById(activated);
       if (tabElement) {
         tabElement.classList.add("active");
+        const sectionElement = tabElement.closest("section");
+        this.containerOpen(sectionElement);
       }
-      const sectionElement = tabElement.closest("section");
-      this.containerOpen(sectionElement);
     });
     browser.tabs.onRemoved.addListener((removed) => {
       [...this.sidebar.querySelectorAll(".tab-item.active")].forEach((tab) => {

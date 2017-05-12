@@ -4,6 +4,38 @@
     "default_panel": "sidebar.html",
     "default_icon": "sea-containers.svg"
   },
+  "commands": {
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Ctrl+Period"
+      },
+      "description": "collapse sidebar"
+    },
+    "thing-comma": {
+      "suggested_key": {
+        "default": "Ctrl+Comma"
+      },
+      "description": "Something else"
+    },
+    "switch-tab-other": {
+      "suggested_key": {
+        "default": "Alt+Shift+Tab"
+      },
+      "description": "Switch to next tab"
+    },
+    "switch-tab": {
+      "suggested_key": {
+        "default": "Ctrl+Tab"
+      },
+      "description": "Switch to next tab"
+    },
+    "switch-tab-reverse": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Tab"
+      },
+      "description": "Switch to previous tab"
+    }
+  },
   "applications": {
     "gecko": {
       "strict_min_version": "54.0"
