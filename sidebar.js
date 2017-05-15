@@ -44,8 +44,7 @@ const DEFAULT_FAVICON = "moz-icon://goat?size=16";
 
 const tabManager = {
   currentContainer: [],
-  currentTabs: [],
-  pinnedTabs: [],
+  currentTabs: new Map(),
   sidebar: null,
   draggedOver: null,
   draggingTab: null,
@@ -58,66 +57,48 @@ const tabManager = {
   },
 
   addListeners() {
-    browser.tabs.onActivated.addListener((activeInfo) => {
-
-      browser.tabs.get(activeInfo.tabId).then((tab) => {
-        const currentSectionElement = this.sidebar.querySelector(`section[data-cookie-store-id="${tab.cookieStoreId}"`);
-        this.containerOpen(currentSectionElement);
-        this.loadTabs().then((activeTab) => {
-          activeTab.scrollIntoView({block: "end", behavior: "smooth"});
-        });
-      });
-    })
-
     browser.tabs.onActivated.addListener((activated) => {
-      const tabElement = this.getTabById(activated);
-      if (tabElement) {
-        tabElement.classList.add("active");
-        const sectionElement = tabElement.closest("section");
-        this.containerOpen(sectionElement);
+      const activeTab = this.getTabById(activated.tabId);
+      if (activeTab) {
+        this.currentTabs.forEach((tabInstance) => {
+          tabInstance.active = false;
+        });
+
+        activeTab.active = true;
       }
     });
     browser.tabs.onRemoved.addListener((removed) => {
-      [...this.sidebar.querySelectorAll(".tab-item.active")].forEach((tab) => {
-        tab.classList.remove("active");
-      });
-      
-      const tabElement = this.getTabById(removed);
-      if (tabElement) {
-        tabElement.remove();
+      const tabInstance = this.getTabById(removed);
+      if (tabInstance) {
+        tabInstance.remove();
       }
     });
 /* not sure if I need these yet
-    browser.tabs.onActivated.addListener(refreshTabs);
     browser.tabs.onAttached.addListener(refreshTabs);
     browser.tabs.onDetached.addListener(refreshTabs);
     browser.tabs.onReplaced.addListener(refreshTabs);
     browser.tabs.onUpdated.addListener(refreshTabs);
 */
-    browser.tabs.onCreated.addListener(refreshTabs);
     // We could potentially stale check here but it might get out of date
     // tracking the tabs state in memory might be more performant though
     const refreshTabs = (tab) => {
       this.loadTabs();
-    }
+    };
+    browser.tabs.onCreated.addListener(refreshTabs);
     browser.tabs.onMoved.addListener(refreshTabs);
     // Once I handle everything this can be removed
     // This overfires right now but clears up stale tabs
     browser.tabs.onUpdated.addListener((tabId, update, tab) => {
       debug("refresh happened", tabId, update, tab);
-      //Remove for now, check is needed    refreshTabs();
-      const tabElement = this.getTabById(tabId);
-      if (tabElement && update.title) {
-        const tabTitle = tabElement.querySelector('.tab-title')
-        if (tabTitle) {
-          tabTitle.innerText = update.title;
-        }
+      const tabInstance = this.getTabById(tabId);
+      if (tabInstance) {
+        tabInstance.update(tab);
       }
     });
   },
 
   getTabById(id) {
-    return this.sidebar.querySelector(`.tab-item[data-tab-id="${id}"]`);
+    return this.currentTabs.get(id);
   },
 
   loadTabs() {
@@ -125,14 +106,11 @@ const tabManager = {
       windowId: browser.windows.WINDOW_ID_CURRENT
     }).then((tabs) => {
       debug('tab', tabs);
-      this.pinnedTabs = [];
-      this.currentTabs = tabs.filter((tab) => {
-        if (tab.pinned) {
-          this.pinnedTabs.push(tab);
-          return false;
-        }
-        return true;
+      this.currentTabs = new Map();
+      tabs.forEach((tab) => {
+        this.currentTabs.set(tab.id, this.createTabInstance(tab));
       });
+
       return this.renderTabs();
     });
   },
@@ -202,56 +180,17 @@ const tabManager = {
     }
   },
 
-  tabActivate(tabElement) {
-    if (!tabElement) {
-      return;
-    }
-    const tabId = tabElement.getAttribute("data-tab-id");
-    if (tabId) {
-      browser.tabs.update(Number(tabId), {
-        active: true
-      });
-    }
-  },
-
-  tabClose(tabElement) {
-    const tabId = tabElement.getAttribute("data-tab-id");
-    if (tabId) {
-      browser.tabs.remove(Number(tabId));
-    }
-  },
-
   handleEvent(e) {
     debug("event", e);
     switch (e.type) {
-      case "error":
-        /* load and error handle missing favicons, about: and WhatsApp have issues here.
-           This causes the app to flicker on rerender... however this indicates a redraw, let's fix how regular that is before anything else like caching
-         */
-        e.target.setAttribute("src", DEFAULT_FAVICON);
-        break;
-      case "load":
-        e.target.classList.remove("offpage");
-        e.target.removeEventListener("load", this);
-        e.target.removeEventListener("error", this);
-        break;
       case "click":
         const sectionElement = e.target.closest("section");
-        const tabElement = e.target.closest(".tab-item");
-        if (tabElement) {
-          if (e.target.tagName === "BUTTON") {
-            this.tabClose(tabElement);
-          } else {
-            this.tabActivate(tabElement);
-          }
-        } else if (sectionElement) {
-          if (e.target.tagName === "BUTTON") {
-            browser.tabs.create({
-              cookieStoreId: sectionElement.getAttribute("data-cookie-store-id")
-            });
-          }
-          this.containerOpen(sectionElement, true);
+        if (e.target.tagName === "BUTTON") {
+          browser.tabs.create({
+            cookieStoreId: sectionElement.getAttribute("data-cookie-store-id")
+          });
         }
+        this.containerOpen(sectionElement, true);
         break;
       case "dragstart":
         this.draggingTab = e.target;
@@ -268,7 +207,7 @@ const tabManager = {
 
         const thisDraggingOverTabElement = e.target.closest(".tab-item");
         thisDraggingOverTabElement.classList.add("over");
-        this.draggedOver = thisDraggingOverTabElement; //e.target;
+        this.draggedOver = thisDraggingOverTabElement;
         break;
       case "dragend":
         this.draggingTab.classList.remove("dragging");
@@ -287,52 +226,33 @@ const tabManager = {
     }
   },
 
+  createTabInstance(tab) {
+    return new TabInstance(tab);
+  },
+
   renderTabs() {
     const containerTabs = {};
     const pinnedTabs = {};
     let activeTab;
 
-    const makeTab = (storage, tab, pinned) => {
-      const cookieStoreId = tab.cookieStoreId;
+    const makeTab = (storage, tabInstance, pinned) => {
+      const cookieStoreId = tabInstance.cookieStoreId;
       if (!(cookieStoreId in storage)) {
         storage[cookieStoreId] = document.createDocumentFragment();
       }
-      const tabElement = document.createElement("div");
-      tabElement.className = "tab-item";
-      if (!pinned) {
-        tabElement.setAttribute("draggable", true);
+
+      if (tabInstance.active) {
+        activeTab = tabInstance;
       }
-      tabElement.setAttribute("data-tab-id", tab.id);
-      tabElement.addEventListener("dragstart", this);
-      tabElement.addEventListener("dragover", this);
-      tabElement.addEventListener("dragend", this);
-      debug("Found tab", tab);
-      if (tab.active) {
-        tabElement.classList.add("active");
-        activeTab = tabElement;
-      }
-      let favIconUrl = DEFAULT_FAVICON;
-      if (tab.favIconUrl) {
-        favIconUrl = tab.favIconUrl;
-      }
-      if (pinned) {
-        tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" title="${tab.title}" />`;
-      } else {
-        tabElement.innerHTML = escaped`
-          <img src="${favIconUrl}" class="offpage" title="${tab.title}" />
-          <div class="tab-title">${tab.title}</div>
-          <button class="close-tab" title="Close tab"></button>`;
-      }
-      tabElement.querySelector("img").addEventListener("error", this);
-      tabElement.querySelector("img").addEventListener("load", this);
-      storage[cookieStoreId].appendChild(tabElement);
+      storage[cookieStoreId].appendChild(tabInstance.render());
     };
   
-    this.currentTabs.forEach((tab) => {
-      makeTab(containerTabs, tab);
-    });
-    this.pinnedTabs.forEach((tab) => {
-      makeTab(pinnedTabs, tab, true);
+    this.currentTabs.forEach((tabInstance) => {
+      if (tabInstance.pinned) {
+        makeTab(pinnedTabs, tabInstance, true);
+      } else {
+        makeTab(containerTabs, tabInstance);
+      }
     });
   
     [...document.querySelectorAll('section')].forEach((section) => {
@@ -360,5 +280,126 @@ const tabManager = {
     return activeTab;
   }
 };
+
+
+class TabInstance {
+  constructor(tabData) {
+    this.tabData = tabData;
+    this.cookieStoreId = tabData.cookieStoreId;
+  }
+
+  get pinned() {
+    return this.tabData.pinned;
+  }
+
+  get active() {
+    return this.tabData.active;
+  }
+
+  set active(isActive) {
+    if (isActive !== this.tabData.active) {
+      this.tabData.active = isActive;
+      this.render();
+      if (isActive) {
+        this.scrollIntoView();
+        /* neaten this up to message pass */
+        const sectionElement = this.tabElement.closest("section");
+        tabManager.containerOpen(sectionElement);
+      }
+    }
+    return this.tabData.active;
+  }
+
+  update(tabData) {
+    this.tabData = tabData;
+    this.render();
+  }
+
+  render() {
+    const cookieStoreId = this.tabData.cookieStoreId;
+    const tabElement = document.createElement("div");
+    tabElement.className = "tab-item";
+    const pinned = this.tabData.pinned;
+    if (!pinned) {
+      tabElement.setAttribute("draggable", true);
+    }
+    tabElement.setAttribute("data-tab-id", this.tabData.id);
+    tabElement.addEventListener("dragstart", this);
+    tabElement.addEventListener("dragover", this);
+    tabElement.addEventListener("dragend", this);
+    debug("Found tab", this.tabData);
+    if (this.tabData.active) {
+      tabElement.classList.add("active");
+    }
+    let favIconUrl = DEFAULT_FAVICON;
+    if ("favIconUrl" in this.tabData) {
+      favIconUrl = this.tabData.favIconUrl;
+    }
+    if (pinned) {
+      tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" title="${this.tabData.title}" />`;
+    } else {
+      tabElement.innerHTML = escaped`
+        <img src="${favIconUrl}" class="offpage" title="${this.tabData.title}" />
+        <div class="tab-title">${this.tabData.title}</div>
+        <button class="close-tab" title="Close tab"></button>`;
+    }
+    const imageElement = tabElement.querySelector("img");
+    imageElement.addEventListener("error", this);
+    imageElement.addEventListener("load", this);
+
+    tabElement.addEventListener("click", this);
+
+    if (this.tabElement) {
+      this.tabElement.replaceWith(tabElement);
+    }
+    this.tabElement = tabElement;
+    return tabElement;
+  }
+
+  handleEvent(e) {
+    debug("event", e);
+    switch (e.type) {
+      case "error":
+        /* load and error handle missing favicons, about: and WhatsApp have issues here.
+           This causes the app to flicker on rerender... however this indicates a redraw, let's fix how regular that is before anything else like caching
+         */
+        e.target.setAttribute("src", DEFAULT_FAVICON);
+        break;
+      case "load":
+        e.target.classList.remove("offpage");
+        e.target.removeEventListener("load", this);
+        e.target.removeEventListener("error", this);
+        break;
+      case "click":
+        if (e.target.tagName === "BUTTON") {
+          this.tabClose();
+        } else {
+          this.tabActivate();
+        }
+        /* Stop us triggering clicks in the parent section */
+        e.stopPropagation();
+        break;
+    }
+  }
+
+  tabClose() {
+    browser.tabs.remove(Number(this.tabData.id));
+  }
+
+  tabActivate() {
+    browser.tabs.update(Number(this.tabData.id), {
+      active: true
+    });
+  }
+
+  scrollIntoView() {
+    this.tabElement.scrollIntoView({block: "end", behavior: "smooth"});
+  }
+
+  /* fired on tab close event. clear up event handlers here */
+  remove() {
+    this.tabElement.remove();
+  }
+}
 
 tabManager.init();
