@@ -354,9 +354,10 @@ class TabInstance {
       tabElement.setAttribute("draggable", true);
     }
     tabElement.setAttribute("data-tab-id", this.tabData.id);
-    tabElement.addEventListener("dragstart", this);
-    tabElement.addEventListener("dragover", this);
-    tabElement.addEventListener("dragend", this);
+    // These methods really should move to somewhere else however they rely on state tracking TODO
+    tabElement.addEventListener("dragstart", tabManager);
+    tabElement.addEventListener("dragover", tabManager);
+    tabElement.addEventListener("dragend", tabManager);
     debug("Found tab", this.tabData);
     if (this.tabData.active) {
       tabElement.classList.add("active");
