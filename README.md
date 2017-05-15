@@ -1,4 +1,4 @@
-# Sea Containers
+# [Sea Containers](https://addons.mozilla.org/en-GB/firefox/addon/sea-containers/?src=search)
 
 ## What it does
 
@@ -7,6 +7,14 @@ Opens a sidebar to manage containers
 ![Sidebar managing containers](preview.png)
 
 # Installing
+
+- Requires Firefox 54 (currently in Beta)
+  - [Download Beta](https://www.mozilla.org/en-US/firefox/beta/all/)
+  - [Download Nightly Firefox](https://www.mozilla.org/en-US/firefox/nightly/all/)
+- Requires [containers enabled](https://testpilot.firefox.com/experiments/containers)
+- [Download from Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/sea-containers/)
+
+# Installing to debug
 
 - Requires Firefox 54 (currently in Beta)
   - [Download Beta](https://www.mozilla.org/en-US/firefox/beta/all/)
