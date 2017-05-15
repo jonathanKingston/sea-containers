@@ -15,6 +15,10 @@ section {
   margin: 0 0 1rem 0;
 }
 
+a {
+ color: #fff;
+}
+
 .container {
   display: flex;
   padding: 0.25rem;
@@ -153,4 +157,22 @@ section {
 /* Lets hide the image but make it load */
 .offpage {
   opacity: 0;
+}
+
+#containersAdvert {
+  display: block;
+  text-decoration: none;
+  padding: 1rem;
+}
+
+#containersAdvert[hidden] {
+  display: none;
+}
+
+#containersAdvert:hover {
+  background-color: rgb(94, 105, 114);
+}
+
+#containersAdvert > img {
+  max-inline-size: 100%;
 }

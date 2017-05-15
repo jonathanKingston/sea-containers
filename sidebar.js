@@ -43,17 +43,25 @@ function debug() {
 const DEFAULT_FAVICON = "moz-icon://goat?size=16";
 
 const tabManager = {
-  currentContainer: [],
+  currentContainers: [],
   currentTabs: new Map(),
   sidebar: null,
   draggedOver: null,
   draggingTab: null,
+  loaded: false,
+  showContainersAdvert: false,
 
   init() {
-    this.sidebar = document.getElementById("sidebarContainer");
     this.getContainers();
     this.loadTabs();
     this.addListeners();
+  },
+
+  load() {
+    this.sidebar = document.getElementById("sidebarContainer");
+    console.log("loaded", this.sidebar);
+    this.loaded = true;
+    this.render();
   },
 
   addListeners() {
@@ -114,23 +122,43 @@ const tabManager = {
       return this.renderTabs();
     });
   },
+
+  hasContainersSupport() {
+    return !!browser.contextualIdentities;
+  },
   
   getContainers() {
-    browser.contextualIdentities.query({
-    }).then((containers) => {
-      debug('got containers', containers);
-      this.currentContainers = containers; 
-      this.currentContainers.unshift({
-        cookieStoreId: 'firefox-default',
-        name: "Default"
+    const defaultContainer = {
+      cookieStoreId: 'firefox-default',
+      name: "Default"
+    };
+    this.showContainersAdvert = false;
+    if (this.hasContainersSupport()) {
+      browser.contextualIdentities.query({
+      }).then((containers) => {
+        debug('got containers', containers);
+        this.currentContainers = containers;
+        this.currentContainers.unshift(defaultContainer);
+        this.render();
       });
+    } else {
+      this.showContainersAdvert = true;
+      this.currentContainers.unshift(defaultContainer);
       this.render();
-    });
+    }
+  },
+
+  toggleAdvert() {
+    const containersAdvertElement = document.getElementById("containersAdvert");
+    containersAdvertElement.hidden = !this.showContainersAdvert;
   },
 
   render() {
     debug('rendering', this.currentContainers, this.currentTabs);
-    this.sidebar = document.getElementById("sidebarContainer");
+    if (!this.loaded) {
+      return;
+    }
+    this.toggleAdvert();
     const fragment = document.createDocumentFragment();
   
     this.currentContainers.forEach((container) => {
@@ -403,3 +431,7 @@ class TabInstance {
 }
 
 tabManager.init();
+
+document.addEventListener("DOMContentLoaded", () => {
+  tabManager.load();
+});
