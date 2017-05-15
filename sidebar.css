@@ -34,9 +34,14 @@ a {
   background-color: rgb(94, 105, 114);
 }
 
-.container .usercontext-icon {
+.usercontext-icon {
   max-inline-size: 32px;
   max-block-size: 24px;
+}
+
+[data-identity-icon="undefined"] .usercontext-icon {
+  fill: currentColor;
+  background: center center no-repeat url("img/blank-tab.svg");
 }
 
 .close-tab, .new-tab {
