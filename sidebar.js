@@ -59,7 +59,6 @@ const tabManager = {
 
   load() {
     this.sidebar = document.getElementById("sidebarContainer");
-    console.log("loaded", this.sidebar);
     this.loaded = true;
     this.render();
   },
@@ -90,6 +89,8 @@ const tabManager = {
     // We could potentially stale check here but it might get out of date
     // tracking the tabs state in memory might be more performant though
     const refreshTabs = (tab) => {
+      // In case the user adds more containers (we need events really etc)
+      //this.getContainers();
       this.loadTabs();
     };
     browser.tabs.onCreated.addListener(refreshTabs);
@@ -124,7 +125,7 @@ const tabManager = {
   },
 
   hasContainersSupport() {
-    return !!browser.contextualIdentities;
+    return browser.contextualIdentities !== undefined;
   },
   
   getContainers() {
@@ -132,6 +133,7 @@ const tabManager = {
       cookieStoreId: 'firefox-default',
       name: "Default"
     };
+    this.currentContainers = [];
     this.showContainersAdvert = false;
     if (this.hasContainersSupport()) {
       browser.contextualIdentities.query({
