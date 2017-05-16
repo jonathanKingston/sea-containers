@@ -141,6 +141,8 @@ a {
   margin-inline-start: auto;
   margin-inline-end: 0.5rem;
   display: flex;
+  flex-flow: wrap;
+  justify-content: end;
 }
 
 .pinned-tabs .tab-item {
