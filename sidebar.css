@@ -59,6 +59,7 @@ a {
   background-position: center 3px;
   padding-block-end: 1px;
 }
+
 .new-tab:hover {
   background-image: url("chrome://browser/skin/tabbrowser/newtab.svg");
   background-color: #cccccccc;
@@ -68,6 +69,7 @@ a {
   margin-left: auto;
   background-image: -moz-image-rect(url("chrome://global/skin/icons/close.svg"), 0, 96, 16, 80);
 }
+
 .close-tab:hover {
   background-color: #cccccccc;
 }
@@ -125,8 +127,10 @@ a {
 }
 
 .tab-item img {
-  inline-size: 16px;
-  block-size: 16px;
+  min-inline-size: 16px;
+  min-block-size: 16px;
+  max-inline-size: 16px;
+  max-block-size: 16px;
   margin: 0 4px 0 0;
 }
 
@@ -166,6 +170,26 @@ a {
 /* Lets hide the image but make it load */
 .offpage {
   opacity: 0;
+}
+
+.tab-item::before {
+  content: "";
+  min-block-size: 16px;
+  min-inline-size: 16px;
+  max-block-size: 16px;
+  max-inline-size: 16px;
+  margin-inline-start: -12px;
+  filter: url(img/filters.svg#fill);
+  fill: rgb(66, 79, 90);
+  background: center center no-repeat;
+}
+
+.sound-playing::before {
+  background-image: url("chrome://browser/skin/tabbrowser/tab-audio-small.svg#tab-audio-white");
+}
+
+.muted::before {
+  background-image: url("chrome://browser/skin/tabbrowser/tab-audio.svg#tab-audio-muted");
 }
 
 #containersAdvert {

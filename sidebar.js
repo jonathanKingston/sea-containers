@@ -401,12 +401,21 @@ class TabInstance {
       favIconUrl = this.tabData.favIconUrl;
     }
     if (pinned) {
-      tabElement.innerHTML = escaped`<img src="${favIconUrl}" class="offpage" title="${this.tabData.title}" />`;
+      tabElement.innerHTML = escaped`
+        <img src="${favIconUrl}" class="favicon offpage" title="${this.tabData.title}" />
+      `;
     } else {
       tabElement.innerHTML = escaped`
         <img src="${favIconUrl}" class="offpage" title="${this.tabData.title}" />
         <div class="tab-title">${this.tabData.title}</div>
         <button class="close-tab" title="Close tab"></button>`;
+    }
+    if (this.tabData.audible) {
+      tabElement.classList.add("sound-playing");
+    }
+    const muted = this.tabData.mutedInfo.muted;
+    if (muted) {
+      tabElement.classList.add("muted");
     }
     const imageElement = tabElement.querySelector("img");
     imageElement.addEventListener("error", this);
