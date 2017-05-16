@@ -18,7 +18,7 @@
     }
   },
   "icons": {
-    "98": "sea-containers.svg"
+    "98": "sea-containers.png"
   },
   "permissions": [
     "tabs",
