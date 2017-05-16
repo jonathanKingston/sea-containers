@@ -98,6 +98,8 @@ a {
 
 .tab-item {
   cursor: pointer;
+  color: unset;
+  text-decoration: none;
   margin: 0;
   padding: 0.3rem 2px 0.3rem 12px;
   display: flex;

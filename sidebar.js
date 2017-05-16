@@ -50,6 +50,8 @@ const tabManager = {
   draggingTab: null,
   loaded: false,
   showContainersAdvert: false,
+  // fired when context menu is triggered
+  currentContext: null,
 
   init() {
     this.getContainers();
@@ -59,6 +61,8 @@ const tabManager = {
 
   load() {
     this.sidebar = document.getElementById("sidebarContainer");
+    const tabItemMenu = document.getElementById("tab-item-menu");
+    tabItemMenu.addEventListener("click", this);
     this.loaded = true;
     this.render();
   },
@@ -84,7 +88,6 @@ const tabManager = {
     browser.tabs.onAttached.addListener(refreshTabs);
     browser.tabs.onDetached.addListener(refreshTabs);
     browser.tabs.onReplaced.addListener(refreshTabs);
-    browser.tabs.onUpdated.addListener(refreshTabs);
 */
     // We could potentially stale check here but it might get out of date
     // tracking the tabs state in memory might be more performant though
@@ -94,11 +97,12 @@ const tabManager = {
       this.loadTabs();
     };
     browser.tabs.onCreated.addListener(refreshTabs);
+    // TODO clear these up, also handle pinning here as move is called
     browser.tabs.onMoved.addListener(refreshTabs);
     // Once I handle everything this can be removed
     // This overfires right now but clears up stale tabs
     browser.tabs.onUpdated.addListener((tabId, update, tab) => {
-      debug("refresh happened", tabId, update, tab);
+      debug("update", tabId, update, tab);
       const tabInstance = this.getTabById(tabId);
       if (tabInstance) {
         tabInstance.update(tab);
@@ -210,17 +214,45 @@ const tabManager = {
     }
   },
 
+  menuItemFire(e) {
+    debug("menuitem", e, this.currentContext, e.target.parentNode, e.target.parentNode.parentNode);
+    if (this.currentContext) {
+      switch (e.target.id) {
+        case "pinTab":
+          this.currentContext.pin();
+          break;
+        case "unpinTab":
+          this.currentContext.pin(false);
+          break;
+        case "reloadTab":
+          this.currentContext.reload();
+          break;
+        case "muteTab":
+          this.currentContext.mute();
+          break;
+        case "unmuteTab":
+          this.currentContext.mute(false);
+          break;
+      }
+      this.currentContext = false;
+    }
+  },
+
   handleEvent(e) {
     debug("event", e);
     switch (e.type) {
       case "click":
-        const sectionElement = e.target.closest("section");
-        if (e.target.tagName === "BUTTON") {
-          browser.tabs.create({
-            cookieStoreId: sectionElement.getAttribute("data-cookie-store-id")
-          });
+        if (e.target.tagName === "MENUITEM") {
+          this.menuItemFire(e);
+        } else {
+          const sectionElement = e.target.closest("section");
+          if (e.target.tagName === "BUTTON") {
+            browser.tabs.create({
+              cookieStoreId: sectionElement.getAttribute("data-cookie-store-id")
+            });
+          }
+          this.containerOpen(sectionElement, true);
         }
-        this.containerOpen(sectionElement, true);
         break;
       case "dragstart":
         this.draggingTab = e.target;
@@ -347,8 +379,10 @@ class TabInstance {
 
   render() {
     const cookieStoreId = this.tabData.cookieStoreId;
-    const tabElement = document.createElement("div");
+    const tabElement = document.createElement("a");
     tabElement.className = "tab-item";
+    tabElement.setAttribute("contextmenu", "tab-item-menu");
+    tabElement.setAttribute("href", this.tabData.url);
     const pinned = this.tabData.pinned;
     if (!pinned) {
       tabElement.setAttribute("draggable", true);
@@ -379,6 +413,7 @@ class TabInstance {
     imageElement.addEventListener("load", this);
 
     tabElement.addEventListener("click", this);
+    tabElement.addEventListener("contextmenu", this);
 
     if (this.tabElement) {
       this.tabElement.replaceWith(tabElement);
@@ -390,6 +425,15 @@ class TabInstance {
   handleEvent(e) {
     debug("event", e);
     switch (e.type) {
+      case "contextmenu":
+        tabManager.currentContext = this;
+        const pinned = this.tabData.pinned;
+        const muted = this.tabData.mutedInfo.muted;
+        document.getElementById("unpinTab").hidden = !pinned;
+        document.getElementById("pinTab").hidden = pinned;
+        document.getElementById("unmuteTab").hidden = !muted;
+        document.getElementById("muteTab").hidden = muted;
+        break;
       case "error":
         /* load and error handle missing favicons, about: and WhatsApp have issues here.
            This causes the app to flicker on rerender... however this indicates a redraw, let's fix how regular that is before anything else like caching
@@ -409,6 +453,8 @@ class TabInstance {
         }
         /* Stop us triggering clicks in the parent section */
         e.stopPropagation();
+        /* As we are a link element stop loading the tab in a new tab */
+        e.preventDefault();
         break;
     }
   }
@@ -430,6 +476,18 @@ class TabInstance {
   /* fired on tab close event. clear up event handlers here */
   remove() {
     this.tabElement.remove();
+  }
+
+  reload() {
+    browser.tabs.reload(this.tabData.id);
+  }
+
+  mute(state = true) {
+    browser.tabs.update(this.tabData.id, {muted: state});
+  }
+
+  pin(state = true) {
+    browser.tabs.update(this.tabData.id, {pinned: state});
   }
 }
 
