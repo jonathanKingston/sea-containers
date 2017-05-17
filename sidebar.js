@@ -41,6 +41,7 @@ function debug() {
 }
 
 const DEFAULT_FAVICON = "moz-icon://goat?size=16";
+const DEFAULT_LOADING = "chrome://global/skin/icons/loading@2x.png";
 
 const tabManager = {
   currentContainers: [],
@@ -397,8 +398,12 @@ class TabInstance {
       tabElement.classList.add("active");
     }
     let favIconUrl = DEFAULT_FAVICON;
-    if ("favIconUrl" in this.tabData) {
-      favIconUrl = this.tabData.favIconUrl;
+    if (this.tabData.status !== "complete") {
+      favIconUrl = DEFAULT_LOADING;
+    } else {
+      if ("favIconUrl" in this.tabData) {
+        favIconUrl = this.tabData.favIconUrl;
+      }
     }
     if (pinned) {
       tabElement.innerHTML = escaped`
