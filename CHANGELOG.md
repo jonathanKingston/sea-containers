@@ -1,3 +1,10 @@
+# 0.8
+
+- Fix mac and windows icons #19
+- Change alignment of icons to match photon.
+- Make icons explicit in size
+- Adding in loading icon. #10
+
 # 0.7
 
 - Added muted and sound playing info icon
