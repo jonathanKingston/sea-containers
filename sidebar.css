@@ -54,24 +54,24 @@ a {
 
 .new-tab {
   box-sizing: content-box;
-  max-block-size: 21px;
-  max-inline-size: 16px;
-  min-block-size: 21px;
-  min-inline-size: 16px;
+  max-block-size: 12px;
+  max-inline-size: 12px;
+  min-block-size: 12px;
+  min-inline-size: 12px;
   padding: 0.3rem;
-  background: no-repeat url("chrome://browser/skin/tabbrowser/newtab-inverted.svg");
+  background: no-repeat url("img/newtab-inverted.svg");
   background-position: center 3px;
-  padding-block-end: 1px;
 }
 
 .new-tab:hover {
-  background-image: url("chrome://browser/skin/tabbrowser/newtab.svg");
+  background-image: url("img/newtab.svg");
   background-color: #cccccccc;
 }
 
 .close-tab {
-  margin-left: auto;
-  background-image: -moz-image-rect(url("chrome://global/skin/icons/close.svg"), 0, 96, 16, 80);
+  margin-inline-start: auto;
+  margin-inline-end: 6px;
+  background-image: url("img/close.svg");
 }
 
 .close-tab:hover {
@@ -107,7 +107,7 @@ a {
   color: unset;
   text-decoration: none;
   margin: 0;
-  padding: 0.3rem 2px 0.3rem 12px;
+  padding: 0.3rem 2px 0.3rem 5px;
   display: flex;
   --in-content-border-highlight: transparent;
   border-inline-start: solid 4px var(--in-content-border-highlight);
@@ -189,11 +189,11 @@ a {
 }
 
 .sound-playing::before {
-  background-image: url("chrome://browser/skin/tabbrowser/tab-audio-small.svg#tab-audio-white");
+  background-image: url("img/tab-audio-small.svg#tab-audio-white");
 }
 
 .muted::before {
-  background-image: url("chrome://browser/skin/tabbrowser/tab-audio.svg#tab-audio-muted");
+  background-image: url("img/tab-audio.svg#tab-audio-muted");
 }
 
 #containersAdvert {
