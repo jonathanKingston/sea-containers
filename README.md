@@ -6,6 +6,8 @@ Opens a sidebar to manage containers
 
 ![Sidebar managing containers](preview.png)
 
+To open the sidebar use Ctrl/Cmd+Shift+Period.
+
 # Installing
 
 - Requires Firefox 54 (currently in Beta)
@@ -25,15 +27,6 @@ Opens a sidebar to manage containers
 - Click the manifest file in this directory
 - As this is a debugging extension, it wont last after a restart.
   - This is currently going through review process to be installable through addons.mozilla.org
-
-# TODO
-
-- Prevent tab click from changing scroll position
-- Performance issues, this was hacked together to prove it is possible
-- Alignment issues
-- Look into why some favicons don't load
-
-- Fix in test pilot broken colour and icons
 
 # Demo as sidebar only
 
