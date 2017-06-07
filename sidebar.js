@@ -47,6 +47,7 @@ const tabManager = {
   currentContainers: [],
   currentTabs: new Map(),
   sidebar: null,
+  searchElement: null,
   draggedOver: null,
   draggingTab: null,
   loaded: false,
@@ -64,6 +65,8 @@ const tabManager = {
     this.sidebar = document.getElementById("sidebarContainer");
     const tabItemMenu = document.getElementById("tab-item-menu");
     tabItemMenu.addEventListener("click", this);
+    this.searchElement = document.getElementById("tab-search");
+    this.searchElement.addEventListener("keyup", this);
     this.loaded = true;
     this.render();
   },
@@ -286,7 +289,33 @@ const tabManager = {
         this.draggingTab = null;
         this.draggedOver = null;
         break;
+      case "keyup":
+        console.log("key up", e);
+        if (e.key === "ArrowDown") {
+          this.selectNext();
+        } else if (e.key === "ArrowUp") {
+          this.selectPrevious();
+        } else {
+          this.filterResults(e);
+        }
+        break;
     }
+  },
+
+  selectNext() {
+    console.log("select next");
+  },
+
+  selectPrevious() {
+    console.log("select prev");
+  },
+
+  filterResults() {
+    console.log("Filter search results", this.searchElement.value, this.currentContainers, this.currentTabs);
+    this.currentTabs.forEach((tabInstance) => {
+      console.log("tt", tabInstance);
+      tabInstance.filter(this.searchElement.value);
+    });
   },
 
   createTabInstance(tab) {
@@ -471,6 +500,27 @@ class TabInstance {
         e.preventDefault();
         break;
     }
+  }
+
+  filter(searchTerm) {
+    const terms = searchTerm.toLowerCase().split(" ");
+    console.log({searchTerm, td: this.tabData, terms});
+    const title = this.tabData.title.toLowerCase();
+    const url = this.tabData.url.toLowerCase();
+    let match = false;
+    const matches = terms.filter((term) => {
+      if (title.match(term) ||
+          url.match(term)) {
+        return true;
+      }
+      return false;
+    });
+    console.log("matches", {terms, matches});
+    if (matches.length !== terms.length) {
+      match = true;
+    }
+    this.tabElement.hidden = !match;
+    return match;
   }
 
   tabClose() {
