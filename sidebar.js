@@ -63,6 +63,7 @@ const tabManager = {
   load() {
     this.sidebar = document.getElementById("sidebarContainer");
     const tabItemMenu = document.getElementById("tab-item-menu");
+    document.addEventListener("click", this);
     tabItemMenu.addEventListener("click", this);
     this.loaded = true;
     this.render();
@@ -183,7 +184,6 @@ const tabManager = {
       containerElement.setAttribute("data-identity-icon", container.icon);
       containerElement.setAttribute("data-identity-color", container.color);
       containerElement.setAttribute("data-cookie-store-id", container.cookieStoreId);
-      containerElement.addEventListener("click", this);
       const tabContainerElement = document.createElement("div");
       tabContainerElement.className = "tab-container";
       containerElement.appendChild(tabContainerElement);
@@ -251,10 +251,20 @@ const tabManager = {
             browser.tabs.create({
               cookieStoreId: sectionElement.getAttribute("data-cookie-store-id")
             });
+            return;
+          }
+          // If middle click is pressed, for some reason firefox doesn't support it locally on the menuitem
+          // https://bugzilla.mozilla.org/show_bug.cgi?id=864096
+          if (e.button === 1) {
+            let tabElement = e.target;
+            tabElement = tabElement.closest(".tab-item");
+            // close tab.
+            browser.tabs.remove(Number(tabElement.dataset.tabId));
+            e.preventDefault();
+            return;
           }
           this.containerOpen(sectionElement, true);
         }
-        break;
       case "dragstart":
         this.draggingTab = e.target;
         this.draggingTab.classList.add("dragging");
@@ -427,6 +437,7 @@ class TabInstance {
     imageElement.addEventListener("load", this);
 
     tabElement.addEventListener("click", this);
+    tabElement.addEventListener("keydown", this);
     tabElement.addEventListener("contextmenu", this);
 
     if (this.tabElement) {
@@ -437,7 +448,7 @@ class TabInstance {
   }
 
   handleEvent(e) {
-    debug("event", e);
+    debug("tab event", e);
     switch (e.type) {
       case "contextmenu":
         tabManager.currentContext = this;
