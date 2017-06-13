@@ -12,7 +12,7 @@ body {
 }
 
 section {
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
 a {
@@ -107,10 +107,15 @@ a {
   color: unset;
   text-decoration: none;
   margin: 0;
-  padding: 0.3rem 2px 0.3rem 5px;
+  padding: calc(0.3rem + 1px) 2px calc(0.3rem + 1px) 5px;
   display: flex;
   --in-content-border-highlight: transparent;
-  border-inline-start: solid 4px var(--in-content-border-highlight);
+  border-inline-start: 4px solid var(--in-content-border-highlight);
+  border-block-end: 1px solid #efefef;
+}
+
+.tab-item:last-of-type {
+  border-block-end: none;
 }
 
 .tab-item.dragging {

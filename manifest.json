@@ -7,7 +7,7 @@
   "commands": {
     "_execute_sidebar_action": {
       "suggested_key": {
-        "default": "Ctrl+Period"
+        "default": "Ctrl+Shift+Period"
       },
       "description": "collapse sidebar"
     }
