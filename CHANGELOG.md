@@ -1,3 +1,8 @@
+# 0.9
+
+- Fix for default Favicon
+- Change shortcut to Ctrl+Comma
+
 # 0.8
 
 - Fix mac and windows icons #19
