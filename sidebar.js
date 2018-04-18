@@ -40,7 +40,7 @@ function debug() {
   }
 }
 
-const DEFAULT_FAVICON = "moz-icon://goat?size=16";
+const DEFAULT_FAVICON = "/img/defaultFavicon.svg";
 const DEFAULT_LOADING = "chrome://global/skin/icons/loading@2x.png";
 
 const tabManager = {
