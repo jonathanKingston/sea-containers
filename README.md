@@ -10,17 +10,17 @@ To open the sidebar use Ctrl/Cmd+Shift+Period.
 
 # Installing
 
-- Requires Firefox 54 (currently in Beta)
-  - [Download Beta](https://www.mozilla.org/en-US/firefox/beta/all/)
-  - [Download Nightly Firefox](https://www.mozilla.org/en-US/firefox/nightly/all/)
+- Requires Firefox 54 or later
+  - [Download Firefox](https://www.mozilla.org/firefox/browsers/)
+  - [Download Nightly Firefox](https://www.mozilla.org/firefox/nightly/all/)
 - Requires [containers enabled](https://testpilot.firefox.com/experiments/containers)
-- [Download from Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/sea-containers/)
+- [Download from Firefox Add-ons](https://addons.mozilla.org/firefox/addon/sea-containers/)
 
 # Installing to debug
 
-- Requires Firefox 54 (currently in Beta)
-  - [Download Beta](https://www.mozilla.org/en-US/firefox/beta/all/)
-  - [Download Nightly Firefox](https://www.mozilla.org/en-US/firefox/nightly/all/)
+- Requires Firefox 54 or later
+  - [Download Beta](https://www.mozilla.org/firefox/browsers/)
+  - [Download Nightly Firefox](https://www.mozilla.org/firefox/nightly/all/)
 - Requires [containers enabled](https://testpilot.firefox.com/experiments/containers)
 - Go to about:debugging
 - Load Temporary Addon
